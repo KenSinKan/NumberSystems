@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 int CharToInt(char x) {
   if (x == '-')
@@ -282,40 +283,43 @@ bool NumberSystems::operator<=(NumberSystems ns) {
 NumberSystems NumberSystems::operator+(NumberSystems ns) {
   if (this->base != ns.base)
     ns.toBase(this->base);
-  NumberSystems ans;
-  ans.setBase(this->base);
+  NumberSystems ans = {"", this->base};
   int carry = 0;
-  for (int i = this->num.size(), j = ns.num.size(); i > 0 || j > 0; i--, j--) {
+  for (int i = this->num.size() - 1, j = ns.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
     int a = 0, b = 0;
-    if (i == 0) a = 0;
-    else a = CharToInt(this->num[i - 1]);
-    if (j == 0) b = 0;
-    else b = CharToInt(ns.num[j - 1]);
+    if (i < 0) a = 0;
+    else a = CharToInt(this->num[i]);
+    if (j < 0) b = 0;
+    else b = CharToInt(ns.num[j]);
     char res = IntToChar((a + b + carry) % this->base);
     carry = (a + b + carry) / this->base;
     ans.push_front(res);
   }
-  if (carry != 0) ans.push_front(IntToChar(carry));
+  if (carry != 0)
+    ans.push_front(IntToChar(carry));
   return ans;
 }
 
 NumberSystems NumberSystems::operator-(NumberSystems ns) {
   if (this->base != ns.base)
     ns.toBase(this->base);
-  NumberSystems ans;
-  ans.setBase(this->base);
+  NumberSystems ans = {"", this->base};
   int carry = 0;
-  for (int i = this->num.size(), j = ns.num.size(); i > 0 || j > 0; i--, j--) {
+  bool subtract = 0;
+  for (int i = this->num.size() - 1, j = ns.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
     int a = 0, b = 0;
-    if (i == 0) a = 0;
-    else a = CharToInt(this->num[i - 1]);
-    if (j == 0) b = 0;
-    else b = CharToInt(ns.num[j - 1]);
-    char res = IntToChar((a - b - carry + this->base) % this->base);
-    carry = (a - b - carry + this->base) / this->base;
-    ans.push_front(res);
+    if (i < 0) a = 0;
+    else a = CharToInt(this->num[i]);
+    a -= subtract;
+    if (j < 0) b = 0;
+    else b = CharToInt(ns.num[j]);
+    if (b > a) subtract = 1;
+    else subtract = 0;
+    std::string res = std::to_string((a - b - carry + (i <= 0 ? 0 : this->base)) % this->base);
+    carry = (a - b - carry + (i <= 0 ? 0 : this->base)) / this->base;
+    if (res != "0") ans.push_front(res);
   }
-  if (carry != 0) ans.push_front(IntToChar(carry));
+  if (carry != 0) ans.push_front(std::to_string(carry));
   return ans;
 }
 
@@ -333,4 +337,8 @@ void NumberSystems::push_back(char c) {
 
 void NumberSystems::push_back(std::string c) {
   this->num.insert(this->num.end(), c.begin(), c.end());
+}
+
+void NumberSystems::toBase(int base) {
+  std::cout << "cot" << std::endl;
 }
