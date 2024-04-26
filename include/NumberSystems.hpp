@@ -26,7 +26,7 @@ class NumberSystems {
 private:
   std::string num;
   int base;
-
+public:
   // Constructors
   NumberSystems();
   NumberSystems(std::string num);
@@ -75,6 +75,16 @@ private:
   void push_back(char x);
   void push_front(std::string x);
   void push_back(std::string x);
+
+  friend std::ostream &operator<<(std::ostream &os, const NumberSystems &ns) {
+    os << ns.num;
+    return os;
+  }
+
+  friend std::istream &operator>>(std::istream &is, NumberSystems &ns) {
+    is >> ns.num;
+    return is;
+  }
 };
 
 NumberSystems::NumberSystems() {
