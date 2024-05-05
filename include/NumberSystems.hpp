@@ -144,14 +144,14 @@ bool NumberSystems::isPos() {
 }
 
 void NumberSystems::setNeg() {
-  if (num[0] == '-')
+  if (isNeg())
     return;
 
-  num.insert(num.begin(), '-');
+  push_front('-');
 }
 
 void NumberSystems::setPos() {
-  if (num[0] != '-' || (num.size() == 1 && num[0] == '0'))
+  if (isPos())
     return;
 
   num.erase(num.begin());
@@ -159,8 +159,10 @@ void NumberSystems::setPos() {
 
 void NumberSystems::setOtherSign() {
   if (num == "0") return;
-  if (isPos())
+  if (isPos()) {
     setNeg();
+    return;
+  }
   setPos();
 }
 
@@ -181,6 +183,7 @@ NumberSystems NumberSystems::getPos() {
 NumberSystems NumberSystems::getOtherSign() {
   NumberSystems ans = *this;
   ans.setOtherSign();
+  
   return ans;
 }
 
@@ -268,9 +271,9 @@ NumberSystems NumberSystems::operator+(NumberSystems other) {
   if (this->base != other.base)
     other.toBase(this->base);
   if (isPos() && other.isNeg())
-    return *this - other;
+    return *this - other.abs();
   if (isNeg() && other.isPos())
-    return other - *this;
+    return other - abs();
   if (isNeg() && other.isNeg()) {
     return -(abs() + other.abs());
   }
@@ -288,12 +291,20 @@ NumberSystems NumberSystems::operator+(NumberSystems other) {
   }
   if (carry != 0)
     ans.push_front(IntToChar(carry));
+  if (ans.num == "") return NumberSystems{0, ans.base};
   return ans;
 }
 
 NumberSystems NumberSystems::operator-(NumberSystems other) {
   if (this->base != other.base)
     other.toBase(this->base);
+  if (isNeg() && other.isPos())
+    return -(abs() + other);
+  if (isPos() && other.isNeg())
+    return *this + other.abs();
+  if (isNeg() && other.isNeg())
+    return other.abs() - abs();
+  
   NumberSystems ans = {"", this->base};
   int carry = 0;
   bool subtract = 0;
@@ -311,6 +322,7 @@ NumberSystems NumberSystems::operator-(NumberSystems other) {
     if (res != "0") ans.push_front(res);
   }
   if (carry != 0) ans.push_front(std::to_string(carry));
+  if (ans.num == "") return NumberSystems{0, ans.base};
   return ans;
 }
 
