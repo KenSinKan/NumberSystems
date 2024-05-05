@@ -28,11 +28,15 @@ private:
   std::string num;
   int base;
 
+  // System's methods
   bool isNeg();
   bool isPos();
   void setNeg();
   void setPos();
   void setOtherSign();
+  NumberSystems getNeg();
+  NumberSystems getPos();
+  NumberSystems getOtherSign();
 public:
   // Constructors
   NumberSystems();
@@ -47,6 +51,7 @@ public:
   void setNum(int num);
   void setNum(std::string num);
   void setBase(int base);
+  
 
   // Bool Operators
   bool operator==(NumberSystems ns);
@@ -62,6 +67,8 @@ public:
   NumberSystems operator*(NumberSystems ns);
   NumberSystems operator/(NumberSystems ns);
   NumberSystems operator%(NumberSystems ns);
+  NumberSystems operator-();
+  NumberSystems abs();
 
   // NumberSystems Conversion
   void toBase(int base);
@@ -82,6 +89,8 @@ public:
     return is;
   }
 };
+
+// Constructors and Destructors
 
 NumberSystems::NumberSystems() {
   num = "0";
@@ -125,6 +134,58 @@ NumberSystems::NumberSystems(int num, int base) {
   this->base = base;
 }
 
+// System's methods
+bool NumberSystems::isNeg() {
+  return num[0] == '-';
+}
+
+bool NumberSystems::isPos() {
+  return num[0] != '-';
+}
+
+void NumberSystems::setNeg() {
+  if (num[0] == '-')
+    return;
+
+  num.insert(num.begin(), '-');
+}
+
+void NumberSystems::setPos() {
+  if (num[0] != '-' || (num.size() == 1 && num[0] == '0'))
+    return;
+
+  num.erase(num.begin());
+}
+
+void NumberSystems::setOtherSign() {
+  if (num == "0") return;
+  if (isPos())
+    setNeg();
+  setPos();
+}
+
+NumberSystems NumberSystems::getNeg() {
+  if (isNeg()) return *this;
+  NumberSystems ans = *this;
+  ans.setNeg();
+  return ans;
+}
+
+NumberSystems NumberSystems::getPos() {
+  if (isPos()) return *this;
+  NumberSystems ans = *this;
+  ans.setPos();
+  return ans;
+}
+
+NumberSystems NumberSystems::getOtherSign() {
+  NumberSystems ans = *this;
+  ans.setOtherSign();
+  return ans;
+}
+
+// Getters and Setters
+
 std::string NumberSystems::getNum() {
   return num;
 }
@@ -155,34 +216,7 @@ void NumberSystems::setNum(std::string num) {
   this->num = num;
 }
 
-bool NumberSystems::isNeg() {
-  return num[0] == '-';
-}
-
-bool NumberSystems::isPos() {
-  return num[0] != '-';
-}
-
-void NumberSystems::setNeg() {
-  if (num[0] == '-')
-    return;
-
-  num.insert(num.begin(), '-');
-}
-
-void NumberSystems::setPos() {
-  if (num[0] != '-' || (num.size() == 1 && num[0] == '0'))
-    return;
-
-  num.erase(num.begin());
-}
-
-void NumberSystems::setOtherSign() {
-  if (num == "0") return;
-  if (isPos())
-    setNeg();
-  setPos();
-}
+// Bool operations
 
 bool NumberSystems::operator==(NumberSystems other) {
   if (this->base != other.base)
@@ -228,9 +262,18 @@ bool NumberSystems::operator<=(NumberSystems other) {
   return this ->operator<(other) || this->operator==(other);
 }
 
+// Math operations
+
 NumberSystems NumberSystems::operator+(NumberSystems other) {
   if (this->base != other.base)
     other.toBase(this->base);
+  if (isPos() && other.isNeg())
+    return *this - other;
+  if (isNeg() && other.isPos())
+    return other - *this;
+  if (isNeg() && other.isNeg()) {
+    return -(abs() + other.abs());
+  }
   NumberSystems ans = {"", this->base};
   int carry = 0;
   for (int i = this->num.size() - 1, j = other.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
@@ -271,6 +314,17 @@ NumberSystems NumberSystems::operator-(NumberSystems other) {
   return ans;
 }
 
+NumberSystems NumberSystems::operator-() {
+  return getOtherSign();
+}
+
+NumberSystems NumberSystems::abs() {
+  if (isNeg()) return getOtherSign();
+  return *this;
+}
+
+// Other
+
 void NumberSystems::push_front(char c) {
   this->num.insert(this->num.begin(), c);
 }
@@ -290,3 +344,4 @@ void NumberSystems::push_back(std::string c) {
 void NumberSystems::toBase(int base) {
   std::cout << "cot" << std::endl;
 }
+
