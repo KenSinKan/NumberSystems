@@ -1,8 +1,9 @@
 #include <iostream>
-#include "../include/NumberSystems.hpp"
+#include "NumberSystems.hpp"
 
 int main(int argc, char *argv[]) {
-  NumberSystems a = -1, b = -4;
-  std::cout << a - b << std::endl;
+  NumberSystems a = {"FF", 16};
+  a.toDec();
+  std::cout << a << std::endl;
   return 0;
 }

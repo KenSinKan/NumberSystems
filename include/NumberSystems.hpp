@@ -23,20 +23,20 @@ char IntToChar(int x) {
   return 127;
 }
 
+int Exponentiation(int basis, int exponent) {
+  int ans = 1;
+  for (int i = 0; i < exponent; ++i) {
+    ans *= basis;
+  }
+
+  return ans;
+}
+
 class NumberSystems {
 private:
   std::string num;
   int base;
 
-  // System's methods
-  bool isNeg();
-  bool isPos();
-  void setNeg();
-  void setPos();
-  void setOtherSign();
-  NumberSystems getNeg();
-  NumberSystems getPos();
-  NumberSystems getOtherSign();
 public:
   // Constructors
   NumberSystems();
@@ -52,25 +52,43 @@ public:
   void setNum(std::string num);
   void setBase(int base);
   
+  // Sign methods
+  bool isNeg();
+  bool isPos();
+  void setNeg();
+  void setPos();
+  void setOtherSign();
+  NumberSystems getNeg();
+  NumberSystems getPos();
+  NumberSystems getOtherSign();
 
   // Bool Operators
-  bool operator==(NumberSystems ns);
-  bool operator!=(NumberSystems ns);
-  bool operator>(NumberSystems ns);
-  bool operator<(NumberSystems ns);
-  bool operator>=(NumberSystems ns);
-  bool operator<=(NumberSystems ns);
+  bool operator==(NumberSystems other);
+  bool operator!=(NumberSystems other);
+  bool operator>(NumberSystems other);
+  bool operator<(NumberSystems other);
+  bool operator>=(NumberSystems other);
+  bool operator<=(NumberSystems other);
 
   // Math Operators
-  NumberSystems operator+(NumberSystems ns);
-  NumberSystems operator-(NumberSystems ns);
-  NumberSystems operator*(NumberSystems ns);
-  NumberSystems operator/(NumberSystems ns);
-  NumberSystems operator%(NumberSystems ns);
+  NumberSystems operator+(NumberSystems other);
+  NumberSystems operator+(int other);
+  NumberSystems operator+(std::string other);
+  NumberSystems operator-(NumberSystems other);
+  NumberSystems operator-(int other);
+  NumberSystems operator-(std::string other);
+  NumberSystems operator*(NumberSystems other);
+  NumberSystems operator/(NumberSystems other);
+  NumberSystems operator%(NumberSystems other);
   NumberSystems operator-();
+
+  NumberSystems operator+=(NumberSystems other);
+  NumberSystems operator-=(NumberSystems other);
+
   NumberSystems abs();
 
   // NumberSystems Conversion
+  void toDec();
   void toBase(int base);
 
   // Other
@@ -79,13 +97,13 @@ public:
   void push_front(std::string x);
   void push_back(std::string x);
 
-  friend std::ostream &operator<<(std::ostream &os, const NumberSystems &ns) {
-    os << ns.num;
+  friend std::ostream &operator<<(std::ostream &os, const NumberSystems &num) {
+    os << num.num;
     return os;
   }
 
-  friend std::istream &operator>>(std::istream &is, NumberSystems &ns) {
-    is >> ns.num;
+  friend std::istream &operator>>(std::istream &is, NumberSystems &num) {
+    is >> num.num;
     return is;
   }
 };
@@ -222,54 +240,54 @@ void NumberSystems::setNum(std::string num) {
 // Bool operations
 
 bool NumberSystems::operator==(NumberSystems other) {
-  if (this->base != other.base)
-    other.toBase(this->base);
+  if (base != other.base)
+    other.toBase(base);
 
   return num == other.num;
 }
 
 bool NumberSystems::operator!=(NumberSystems other) {
-  if (this->base != other.base)
-    other.toBase(this->base);
+  if (base != other.base)
+    other.toBase(base);
 
-  return this->num != other.num;
+  return num != other.num;
 }
 
 bool NumberSystems::operator>(NumberSystems other) {
-  if (this->base != other.base)
-    other.toBase(this->base);
+  if (base != other.base)
+    other.toBase(base);
 
-  if (this->num.size() > other.num.size())
+  if (num.size() > other.num.size())
     return true;
-  if (this->num.size() < other.num.size())
+  if (num.size() < other.num.size())
     return false;
-  return this->num > other.num;
+  return num > other.num;
 }
 
 bool NumberSystems::operator<(NumberSystems other) {
-  if (this->base != other.base)
-    other.toBase(this->base);
+  if (base != other.base)
+    other.toBase(base);
 
-  if (this->num.size() < other.num.size())
+  if (num.size() < other.num.size())
     return true;
-  if (this->num.size() > other.num.size())
+  if (num.size() > other.num.size())
     return false;
-  return this->num < other.num;
+  return num < other.num;
 }
 
 bool NumberSystems::operator>=(NumberSystems other) {
-  return this ->operator>(other) || this->operator==(other);
+  return this ->operator>(other) || operator==(other);
 }
 
 bool NumberSystems::operator<=(NumberSystems other) {
-  return this ->operator<(other) || this->operator==(other);
+  return this ->operator<(other) || operator==(other);
 }
 
 // Math operations
 
 NumberSystems NumberSystems::operator+(NumberSystems other) {
-  if (this->base != other.base)
-    other.toBase(this->base);
+  if (base != other.base)
+    other.toBase(base);
   if (isPos() && other.isNeg())
     return *this - other.abs();
   if (isNeg() && other.isPos())
@@ -277,16 +295,16 @@ NumberSystems NumberSystems::operator+(NumberSystems other) {
   if (isNeg() && other.isNeg()) {
     return -(abs() + other.abs());
   }
-  NumberSystems ans = {"", this->base};
+  NumberSystems ans = {"", base};
   int carry = 0;
-  for (int i = this->num.size() - 1, j = other.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
+  for (int i = num.size() - 1, j = other.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
     int a = 0, b = 0;
     if (i < 0) a = 0;
-    else a = CharToInt(this->num[i]);
+    else a = CharToInt(num[i]);
     if (j < 0) b = 0;
     else b = CharToInt(other.num[j]);
-    char res = IntToChar((a + b + carry) % this->base);
-    carry = (a + b + carry) / this->base;
+    char res = IntToChar((a + b + carry) % base);
+    carry = (a + b + carry) / base;
     ans.push_front(res);
   }
   if (carry != 0)
@@ -295,9 +313,17 @@ NumberSystems NumberSystems::operator+(NumberSystems other) {
   return ans;
 }
 
+NumberSystems NumberSystems::operator+(int other) {
+  return *this + NumberSystems(other);
+}
+
+NumberSystems NumberSystems::operator+(std::string other) {
+  return *this + NumberSystems(other);
+}
+
 NumberSystems NumberSystems::operator-(NumberSystems other) {
-  if (this->base != other.base)
-    other.toBase(this->base);
+  if (base != other.base)
+    other.toBase(base);
   if (isNeg() && other.isPos())
     return -(abs() + other);
   if (isPos() && other.isNeg())
@@ -305,29 +331,44 @@ NumberSystems NumberSystems::operator-(NumberSystems other) {
   if (isNeg() && other.isNeg())
     return other.abs() - abs();
   
-  NumberSystems ans = {"", this->base};
-  int carry = 0;
+  NumberSystems ans = {"", base};
   bool subtract = 0;
-  for (int i = this->num.size() - 1, j = other.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
+  for (int i = num.size() - 1, j = other.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
     int a = 0, b = 0;
     if (i < 0) a = 0;
-    else a = CharToInt(this->num[i]);
+    else a = CharToInt(num[i]);
     a -= subtract;
     if (j < 0) b = 0;
     else b = CharToInt(other.num[j]);
     if (b > a) subtract = 1;
     else subtract = 0;
-    std::string res = std::to_string((a - b - carry + (i <= 0 ? 0 : this->base)) % this->base);
-    carry = (a - b - carry + (i <= 0 ? 0 : this->base)) / this->base;
+    std::string res = std::to_string((a - b + (i <= 0 ? 0 : base)) % base);
     if (res != "0") ans.push_front(res);
   }
-  if (carry != 0) ans.push_front(std::to_string(carry));
   if (ans.num == "") return NumberSystems{0, ans.base};
   return ans;
 }
 
+NumberSystems NumberSystems::operator-(int other) {
+  return *this - NumberSystems(other);
+}
+
+NumberSystems NumberSystems::operator-(std::string other) {
+  return *this - NumberSystems(other);
+}
+
 NumberSystems NumberSystems::operator-() {
   return getOtherSign();
+}
+
+NumberSystems NumberSystems::operator+=(NumberSystems other) {
+  *this = *this + other;
+  return *this;
+}
+
+NumberSystems NumberSystems::operator-=(NumberSystems other) {
+  *this = *this - other;
+  return *this;
 }
 
 NumberSystems NumberSystems::abs() {
@@ -338,19 +379,28 @@ NumberSystems NumberSystems::abs() {
 // Other
 
 void NumberSystems::push_front(char c) {
-  this->num.insert(this->num.begin(), c);
+  num.insert(num.begin(), c);
 }
 
 void NumberSystems::push_front(std::string c) {
-  this->num.insert(this->num.begin(), c.begin(), c.end());
+  num.insert(num.begin(), c.begin(), c.end());
 }
 
 void NumberSystems::push_back(char c) {
-  this->num.push_back(c);
+  num.push_back(c);
 }
 
 void NumberSystems::push_back(std::string c) {
-  this->num.insert(this->num.end(), c.begin(), c.end());
+  num.insert(num.end(), c.begin(), c.end());
+}
+
+void NumberSystems::toDec() {
+  NumberSystems ans = {"", 10};
+  for (int i = num.size() - 1; i >= (isPos() ? 0 : 1); --i) {
+    ans += CharToInt(num[i]) * Exponentiation(base, num.size() - 1 - i);
+  }
+  
+  *this = (isPos() ? ans : ans.getOtherSign());
 }
 
 void NumberSystems::toBase(int base) {

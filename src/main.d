@@ -1,1 +1,1 @@
-src/main.o: src/main.cpp src/../include/NumberSystems.hpp
+src/main.o: src/main.cpp include/NumberSystems.hpp
