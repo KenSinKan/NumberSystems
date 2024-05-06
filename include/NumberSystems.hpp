@@ -27,16 +27,7 @@ class NumberSystems {
 private:
   std::string num;
   int base;
-
-  // System's methods
-  bool isNeg();
-  bool isPos();
-  void setNeg();
-  void setPos();
-  void setOtherSign();
-  NumberSystems getNeg();
-  NumberSystems getPos();
-  NumberSystems getOtherSign();
+  
 public:
   // Constructors
   NumberSystems();
@@ -52,6 +43,15 @@ public:
   void setNum(std::string num);
   void setBase(int base);
   
+  // Sign methods
+  bool isNeg();
+  bool isPos();
+  void setNeg();
+  void setPos();
+  void setOtherSign();
+  NumberSystems getNeg();
+  NumberSystems getPos();
+  NumberSystems getOtherSign();
 
   // Bool Operators
   bool operator==(NumberSystems ns);
