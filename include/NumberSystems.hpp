@@ -332,6 +332,7 @@ NumberSystems NumberSystems::operator-(NumberSystems other) {
     return other.abs() - abs();
   
   NumberSystems ans = {"", base};
+
   bool subtract = 0;
   for (int i = num.size() - 1, j = other.num.size() - 1; i >= 0 || j >= 0; i--, j--) {
     int a = 0, b = 0;
@@ -343,6 +344,7 @@ NumberSystems NumberSystems::operator-(NumberSystems other) {
     if (b > a) subtract = 1;
     else subtract = 0;
     std::string res = std::to_string((a - b + (i <= 0 ? 0 : base)) % base);
+
     if (res != "0") ans.push_front(res);
   }
   if (ans.num == "") return NumberSystems{0, ans.base};
