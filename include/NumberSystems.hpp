@@ -54,19 +54,19 @@ public:
   NumberSystems getOtherSign();
 
   // Bool Operators
-  bool operator==(NumberSystems ns);
-  bool operator!=(NumberSystems ns);
-  bool operator>(NumberSystems ns);
-  bool operator<(NumberSystems ns);
-  bool operator>=(NumberSystems ns);
-  bool operator<=(NumberSystems ns);
+  bool operator==(NumberSystems other);
+  bool operator!=(NumberSystems other);
+  bool operator>(NumberSystems other);
+  bool operator<(NumberSystems other);
+  bool operator>=(NumberSystems other);
+  bool operator<=(NumberSystems other);
 
   // Math Operators
-  NumberSystems operator+(NumberSystems ns);
-  NumberSystems operator-(NumberSystems ns);
-  NumberSystems operator*(NumberSystems ns);
-  NumberSystems operator/(NumberSystems ns);
-  NumberSystems operator%(NumberSystems ns);
+  NumberSystems operator+(NumberSystems other);
+  NumberSystems operator-(NumberSystems other);
+  NumberSystems operator*(NumberSystems other);
+  NumberSystems operator/(NumberSystems other);
+  NumberSystems operator%(NumberSystems other);
   NumberSystems operator-();
   NumberSystems abs();
 
