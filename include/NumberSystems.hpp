@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <vector>
 
 int CharToInt(char x) {
   if (x == '-')
@@ -89,6 +90,7 @@ public:
 
   // NumberSystems Conversion
   void toDec();
+  void fromDec();
   void toBase(int base);
 
   // Other
@@ -371,6 +373,34 @@ NumberSystems NumberSystems::operator+=(NumberSystems other) {
 NumberSystems NumberSystems::operator-=(NumberSystems other) {
   *this = *this - other;
   return *this;
+}
+
+NumberSystems NumberSystems::operator*(NumberSystems other) {
+  if (base != other.base)
+    other.toBase(base);
+  if (isNeg() && other.isPos())
+    return -(abs() * other);
+  if (isPos() && other.isNeg())
+    return -(*this * other.abs());
+  if (isNeg() && other.isNeg())
+    return abs() * other.abs();
+  std::vector<NumberSystems> sum;
+  for (int i = other.num.size() - 1; i >= 0; --i) {
+    int carry = 0;
+    NumberSystems res = {"", base};
+    for (int j = num.size() - 1; j >= 0; --j) {
+      res.push_front(IntToChar((CharToInt(other.num[i]) * CharToInt(num[j]) + carry) % base));
+      carry = (CharToInt(other.num[i]) * CharToInt(num[j]) + carry) / base;
+    }
+    for (int j = 0; j < other.num.size() - 1 - i; ++j) {
+      res.push_back('0');
+    }
+    sum.push_back(res);
+  }
+  NumberSystems res = {"0", base};
+  for (auto x : sum)
+    res += x;
+  return res;
 }
 
 NumberSystems NumberSystems::abs() {

@@ -2,8 +2,7 @@
 #include "NumberSystems.hpp"
 
 int main(int argc, char *argv[]) {
-  NumberSystems a = {"FF", 16};
-  a.toDec();
-  std::cout << a << std::endl;
+  NumberSystems a = 2, b = 10;
+  std::cout << a * b << std::endl;
   return 0;
 }
